@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Webpage</title>
+</head>
+<body>
+    <button id="connectButton">Connect</button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const connectButton = document.getElementById('connectButton');
+
+            connectButton.addEventListener('click', async () => {
+                if (window.ethereum) {
+                    try {
+                        await window.ethereum.request({ method: 'eth_requestAccounts' });
+                        const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+
+                        const userAddress = accounts[0];
+
+                        // Send user address to your server for further processing
+                        await fetch('http://127.0.0.1:8080/connect', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ userAddress }),
+                        });
+                    } catch (error) {
+                        console.error(error);
+                    }
+                } else {
+                    console.error('Web3 not found. Please install MetaMask or another Ethereum wallet extension.');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
